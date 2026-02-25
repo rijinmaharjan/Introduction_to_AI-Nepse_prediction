@@ -24,6 +24,7 @@ def preprocess_data(file_path):
     """
     Handles data cleaning, chronological sorting, 
     and advanced feature engineering (MA7, MA21).
+    Filters for the last 5 years of data.
     """
     df = pd.read_csv(file_path)
     
@@ -31,6 +32,12 @@ def preprocess_data(file_path):
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values('Date').drop_duplicates(subset=['Date'])
     
+    # --- NEW: FILTER FOR LAST 5 YEARS ---
+    latest_date = df['Date'].max()
+    start_date = latest_date - pd.DateOffset(years=5)
+    df = df[df['Date'] >= start_date].copy()
+    # ------------------------------------
+
     # 2. Feature Selection: Engineering Technical Indicators
     df['MA7'] = df['Close Price'].rolling(window=7).mean()
     df['MA21'] = df['Close Price'].rolling(window=21).mean()
