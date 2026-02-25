@@ -163,7 +163,7 @@ if __name__ == "__main__":
             print(report)
             
             #VISUAL
-            # generate_visual_evidence(model, X_test, y_test, stock_name) 
+            generate_visual_evidence(model, X_test, y_test, stock_name) 
         else:
             print(f"Error: {file_name} not found.")
 
