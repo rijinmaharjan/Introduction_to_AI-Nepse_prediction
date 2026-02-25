@@ -60,7 +60,7 @@ def train_and_evaluate(df, stock_name):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
     
     # Model initialization with 'balanced' weights to fix "Always Upward" bias
-    model = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42)
+    model = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42) #n_estimator change and check 
     model.fit(X_train, y_train)
     
     # Generate predictions for evaluation
@@ -156,7 +156,7 @@ if __name__ == "__main__":
             print(report)
             
             #VISUAL
-            # generate_visual_evidence(model, X_test, y_test, stock_name)
+            # generate_visual_evidence(model, X_test, y_test, stock_name) 
         else:
             print(f"Error: {file_name} not found.")
 
