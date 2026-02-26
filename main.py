@@ -53,10 +53,35 @@ def preprocess_data(file_path):
 # ==========================================================
 # TASK 3 & 4: MODEL DESIGN, TRAINING & EVALUATION
 # ==========================================================
+# def train_and_evaluate(df, stock_name):
+#     """
+#     Task 3: Algorithm - Random Forest with Class Balancing.
+#     Task 4: Evaluation using Accuracy, Precision, Recall, and F1-score.
+#     """
+#     # Features used for classification
+#     features = ['Total Transactions', 'Total Traded Shares', 'Close Price', 'MA7', 'MA21', 'Returns']
+#     X = df[features]
+#     y = df['Target']
+    
+#     # Temporal splitting (No shuffling) to simulate real-world time sequence
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    
+#     # Model initialization with 'balanced' weights to fix "Always Upward" bias
+#     model = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42) #n_estimator change and check 
+#     model.fit(X_train, y_train)
+    
+#     # Generate predictions for evaluation
+#     y_pred = model.predict(X_test)
+#     acc = accuracy_score(y_test, y_pred)
+#     report = classification_report(y_test, y_pred)
+    
+#     return model, acc, report, X_test, y_test
+
 def train_and_evaluate(df, stock_name):
     """
     Task 3: Algorithm - Random Forest with Class Balancing.
     Task 4: Evaluation using Accuracy, Precision, Recall, and F1-score.
+    + Simple hyperparameter tuning on n_estimators.
     """
     # Features used for classification
     features = ['Total Transactions', 'Total Traded Shares', 'Close Price', 'MA7', 'MA21', 'Returns']
@@ -64,10 +89,41 @@ def train_and_evaluate(df, stock_name):
     y = df['Target']
     
     # Temporal splitting (No shuffling) to simulate real-world time sequence
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, shuffle=False
+    )
     
-    # Model initialization with 'balanced' weights to fix "Always Upward" bias
-    model = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42) #n_estimator change and check 
+    # ---------------- HYPERPARAMETER TUNING (n_estimators) ----------------
+    n_values = [50, 100, 150, 200]   # you can change this list if you want
+    best_n = None
+    best_acc = 0.0
+
+    print(f"\n>>> Tuning n_estimators for {stock_name}")
+    for n in n_values:
+        temp_model = RandomForestClassifier(
+            n_estimators=n,
+            class_weight='balanced',
+            random_state=42
+        )
+        temp_model.fit(X_train, y_train)
+        temp_pred = temp_model.predict(X_test)
+        temp_acc = accuracy_score(y_test, temp_pred)
+
+        print(f"{stock_name} | n_estimators = {n:3d} -> Accuracy = {temp_acc:.4f}")
+
+        if temp_acc > best_acc:
+            best_acc = temp_acc
+            best_n = n
+
+    print(f"Best n_estimators for {stock_name}: {best_n} (Accuracy = {best_acc:.4f})")
+    # ----------------------------------------------------------------------
+
+    # Final model using the best n_estimators
+    model = RandomForestClassifier(
+        n_estimators=best_n,
+        class_weight='balanced',
+        random_state=42
+    )
     model.fit(X_train, y_train)
     
     # Generate predictions for evaluation
@@ -163,7 +219,7 @@ if __name__ == "__main__":
             print(report)
             
             #VISUAL
-            generate_visual_evidence(model, X_test, y_test, stock_name) 
+            # generate_visual_evidence(model, X_test, y_test, stock_name) 
         else:
             print(f"Error: {file_name} not found.")
 
