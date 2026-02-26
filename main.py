@@ -31,7 +31,7 @@ def preprocess_data(file_path):
     # 1. Cleaning & Sorting
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values('Date').drop_duplicates(subset=['Date'])
-    
+
     # --- NEW: FILTER FOR LAST 5 YEARS ---
     latest_date = df['Date'].max()
     start_date = latest_date - pd.DateOffset(years=5)
@@ -219,7 +219,7 @@ if __name__ == "__main__":
             print(report)
             
             #VISUAL
-            # generate_visual_evidence(model, X_test, y_test, stock_name) 
+            generate_visual_evidence(model, X_test, y_test, stock_name) 
         else:
             print(f"Error: {file_name} not found.")
 
