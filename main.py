@@ -42,7 +42,7 @@ def preprocess_data(file_path):
     df['MA7'] = df['Close Price'].rolling(window=7).mean()
     df['MA21'] = df['Close Price'].rolling(window=21).mean()
     df['Returns'] = df['Close Price'].pct_change().replace([np.inf, -np.inf], 0)
-    
+
     # 3. Defining Target: 1 for Price UP next day, 0 for DOWN/STABLE
     df['Target'] = (df['Close Price'].shift(-1) > df['Close Price']).astype(int)
     
